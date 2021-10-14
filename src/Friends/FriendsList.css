@@ -1,0 +1,11 @@
+.FriendsList__container {
+    margin-top: 2rem;
+}
+
+.FriendsList__container .card {
+    margin-bottom: 1rem;
+}
+
+.FriendsList__container .btn {
+    margin: .25rem .125rem;
+}
