@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Container } from "reactstrap";
+import { v4 as uuid } from "uuid";
 
 import AccountForm from "./Form";
 import { FriendsList } from "./Friends";
@@ -27,44 +28,30 @@ function App() {
         persistData(friends);
     }, [friends]);
 
-    const handleSubmit = useCallback(
-        (formData: Friend) => {
-            if (selected) {
-                const { name, email, walletAddress } = selected;
-                setFriends(friends =>
-                    friends.map(f => {
-                        if (
-                            f.walletAddress === walletAddress &&
-                            f.name === name &&
-                            f.email === email
-                        ) {
-                            f = { ...formData };
-                        }
-                        return f;
-                    })
-                );
-                setSelected(undefined);
-            } else {
-                setFriends(friends => friends.concat({ ...formData }));
-            }
-        },
-        [selected]
-    );
+    const handleSubmit = useCallback((formData: Friend) => {
+        if (formData.id) {
+            setFriends(friends =>
+                friends.map(f => {
+                    if (f.id === formData.id) {
+                        f = { ...formData };
+                    }
+                    return f;
+                })
+            );
+            setSelected(undefined);
+        } else {
+            setFriends(friends => friends.concat({ ...formData, id: uuid() }));
+        }
+    }, []);
 
     const updateAccount = useCallback((account: Friend) => {
         setSelected(account);
     }, []);
 
     const deleteAccount = useCallback((account: Friend) => {
-        const { name, email, walletAddress } = account;
-        setFriends(friends =>
-            friends.filter(
-                f =>
-                    f.walletAddress !== walletAddress &&
-                    f.email !== email &&
-                    f.name !== name
-            )
-        );
+        const { id } = account;
+        setFriends(friends => friends.filter(f => f.id !== id));
+        setSelected(friend => (friend?.id === id ? undefined : friend));
     }, []);
 
     return (

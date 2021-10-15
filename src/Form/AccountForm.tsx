@@ -12,7 +12,12 @@ type Props = Readonly<{
     onSubmit: (data: Friend) => void;
 }>;
 
-const DEFAULT_STATE: Friend = { name: "", email: "", walletAddress: "" };
+const DEFAULT_STATE: Friend = {
+    id: "",
+    name: "",
+    email: "",
+    walletAddress: "",
+};
 
 type ErrorState = {
     name: boolean;
@@ -36,8 +41,13 @@ export default function AccountForm(props: Props) {
     });
 
     useEffect(() => {
-        const { name = "", email = "", walletAddress = "" } = props.data ?? {};
-        setState({ name, email, walletAddress });
+        const {
+            id = "",
+            name = "",
+            email = "",
+            walletAddress = "",
+        } = props.data ?? {};
+        setState({ id, name, email, walletAddress });
     }, [props.data]);
 
     const handleChange = useCallback(event => {
@@ -47,6 +57,7 @@ export default function AccountForm(props: Props) {
 
     const submitForm = useCallback(() => {
         const data = {
+            id: state.id,
             name: state.name?.trim(),
             email: state.email?.trim(),
             walletAddress: state.walletAddress?.trim(),
