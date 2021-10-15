@@ -21,7 +21,7 @@ type ErrorState = {
 };
 function getErrorState({ name, email, walletAddress }: Friend): ErrorState {
     return {
-        name: name.trim() === "",
+        name: !Boolean(name),
         email: !validateEmail(email),
         walletAddress: !web3.utils.isAddress(walletAddress),
     };
@@ -46,13 +46,18 @@ export default function AccountForm(props: Props) {
     }, []);
 
     const submitForm = useCallback(() => {
-        const error = getErrorState(state);
+        const data = {
+            name: state.name?.trim(),
+            email: state.email?.trim(),
+            walletAddress: state.walletAddress?.trim(),
+        };
+        const error = getErrorState(data);
         setHasError(error);
         if (error.email || error.name || error.walletAddress) {
             return;
         }
         const save = props.onSubmit;
-        save(state);
+        save(data);
         setState({ ...DEFAULT_STATE });
     }, [props.onSubmit, state]);
 
